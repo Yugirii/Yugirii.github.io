@@ -1,8 +1,11 @@
 import type { NextConfig } from "next";
 
-const repositoryName = "Website-Portfolio";
+const repositoryName = process.env.GITHUB_REPOSITORY?.split("/")[1] ?? "";
 const isGitHubPages = process.env.GITHUB_ACTIONS === "true";
-const basePath = isGitHubPages ? `/${repositoryName}` : "";
+const isUserSite = repositoryName.toLowerCase().endsWith(".github.io");
+const basePath = isGitHubPages && repositoryName && !isUserSite
+  ? `/${repositoryName}`
+  : "";
 
 const nextConfig: NextConfig = {
   output: "export",
