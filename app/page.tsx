@@ -1,65 +1,64 @@
 import Image from "next/image";
+import styles from "./page.module.css";
+
+const navItems = ["Home", "Work", "About", "Contact"];
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className={styles.pageShell}>
+      <header className={styles.navbar}>
+        <nav className={styles.navLinks} aria-label="Main navigation">
+          {navItems.map((item) => (
+            <a key={item} href={`#${item.toLowerCase()}`}>
+              {item}
+            </a>
+          ))}
+        </nav>
+      </header>
+
+      <section className={styles.hero} id="home">
+        <div className={styles.heroInner}>
+          <div className={styles.heroCopy}>
+            <p className={styles.rolePill}>
+              Web Developer | Software QA Analyst | Project Manager
+            </p>
+
+            <h1 className={styles.heroTitle}>Hi, I&apos;m Marcus</h1>
+
+            <p className={styles.heroIntro}>
+              A Bachelor of Science in Information Technology graduate aspiring
+              to build, explore, and enhance systems. With hands-on experience
+              in software quality assurance, having led ISO/IEC 25010-based
+              testing on a capstone system that achieved 95% overall
+              conformance.
+            </p>
+
+            <div className={styles.heroActions}>
+              <a className={styles.primaryAction} href="#work">
+                Explore Work
+              </a>
+              <a className={styles.secondaryAction} href="#about">
+                Read Profile
+              </a>
+            </div>
+          </div>
+
+          <div className={styles.portraitStage}>
+            <div className={styles.portraitFrame}>
+              <Image
+                className={styles.portraitImage}
+                src={`${basePath}/Images/DeveloperImage.jpg`}
+                alt="Portrait of Marcus"
+                width={2400}
+                height={3000}
+                sizes="(max-width: 768px) 72vw, 360px"
+                loading="eager"
+              />
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      </section>
+    </main>
   );
 }
