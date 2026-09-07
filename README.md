@@ -1,4 +1,4 @@
-# Marcus Portfolio
+# Marcus' Portfolio
 
 Personal portfolio website built with Next.js and exported as a static site for
 GitHub Pages.
