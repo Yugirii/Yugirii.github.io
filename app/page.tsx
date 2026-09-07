@@ -9,8 +9,12 @@ export default function Home() {
     <main className={styles.pageShell}>
       <header className={styles.navbar}>
         <nav className={styles.navLinks} aria-label="Main navigation">
-          {navItems.map((item) => (
-            <a key={item} href={`#${item.toLowerCase()}`}>
+          {navItems.map((item, index) => (
+            <a
+              key={item}
+              href={`#${item.toLowerCase()}`}
+              className={index === 0 ? styles.navActive : styles.navLink}
+            >
               {item}
             </a>
           ))}
@@ -45,6 +49,7 @@ export default function Home() {
           </div>
 
           <div className={styles.portraitStage}>
+            <div className={styles.portraitGlow} aria-hidden="true" />
             <div className={styles.portraitFrame}>
               <Image
                 className={styles.portraitImage}
@@ -62,3 +67,4 @@ export default function Home() {
     </main>
   );
 }
+

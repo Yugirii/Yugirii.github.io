@@ -1,15 +1,29 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0c1821;
-  --foreground: #ccc9dc;
+  --color-bg: #0C1821;
+  --color-text-heading: #CCC9DC;
+  --color-text-body: #9294A4;
+  --color-accent-gold: #E8C547;       /* primary accent — unchanged */
+  --color-accent-blue: #4A7FE0;       /* new secondary accent, for text/borders */
+  --color-accent-blue-light: #6FA0EE;  /* use for small text or icons needing more contrast */
+
+  /* System fallbacks & typography */
+  --background: var(--color-bg);
+  --foreground: var(--color-text-heading);
   --site-font-sans: "MS Reference Sans Serif", "Segoe UI", Arial, sans-serif;
   --site-font-mono: "Cascadia Code", Consolas, monospace;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--color-bg);
+  --color-foreground: var(--color-text-heading);
+  --color-bg: var(--color-bg);
+  --color-text-heading: var(--color-text-heading);
+  --color-text-body: var(--color-text-body);
+  --color-accent-gold: var(--color-accent-gold);
+  --color-accent-blue: var(--color-accent-blue);
+  --color-accent-blue-light: var(--color-accent-blue-light);
   --font-sans: var(--site-font-sans);
   --font-mono: var(--site-font-mono);
 }
@@ -21,17 +35,19 @@
 html {
   min-height: 100%;
   scroll-behavior: smooth;
-  background: var(--background);
+  background: var(--color-bg);
 }
 
 body {
   min-height: 100vh;
   margin: 0;
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--color-bg);
+  color: var(--color-text-body);
   font-family: var(--site-font-sans);
 }
 
 a {
   color: inherit;
+  text-decoration: none;
 }
+
