@@ -1,5 +1,6 @@
 import Image from "next/image";
 import styles from "./page.module.css";
+import TechStack from "./components/TechStack";
 
 const navItems = ["Home", "Work", "About", "Contact"];
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
@@ -64,7 +65,10 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      <TechStack />
     </main>
   );
 }
+
 

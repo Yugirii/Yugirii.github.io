@@ -8,6 +8,12 @@
   --color-accent-blue: #4A7FE0;       /* new secondary accent, for text/borders */
   --color-accent-blue-light: #6FA0EE;  /* use for small text or icons needing more contrast */
 
+  /* Tech Stack / card tokens */
+  --color-card-bg: #111f2c;
+  --color-card-border: #1e2c3a;
+  --color-text-primary: #CCC9DC;
+  --color-text-secondary: #9294A4;
+
   /* System fallbacks & typography */
   --background: var(--color-bg);
   --foreground: var(--color-text-heading);

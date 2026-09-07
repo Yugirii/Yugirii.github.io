@@ -1,0 +1,227 @@
+/* ─────────────────────────────────────────
+   TechStack section
+   ───────────────────────────────────────── */
+
+/* Section wrapper — full-height, vertically centered, mirrors .hero */
+.section {
+  position: relative;
+  overflow: hidden;          /* clips the glow blob at section edges */
+  background: var(--color-bg);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
+/* ─── Cursor-following spotlight glow ───────────────────────────────────────
+   Rendered as the first child of <section>, behind .inner (z-index 0 vs 1).
+   Position is driven by JS via transform — GPU-composited, no layout thrash.
+   Starts hidden (opacity 0); fades in on mouseenter, out on mouseleave.
+─────────────────────────────────────────────────────────────────────────── */
+.spotlight {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(232, 197, 71, 0.18) 0%,
+    rgba(232, 197, 71, 0.08) 40%,
+    transparent 70%
+  );
+  filter: blur(48px);
+  pointer-events: none;
+  /* JS will override this transform on every rAF tick */
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  will-change: transform;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+/* Inner container — two-column grid, mirrors .heroInner */
+/* z-index: 1 lifts the entire content layer above the spotlight (z-index 0) */
+.inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: min(1136px, calc(100% - 4rem));
+  min-height: 100vh;
+  margin: 0 auto;
+  grid-template-columns: minmax(0, 0.6fr) minmax(0, 1.4fr);
+  align-items: center;
+  gap: clamp(3rem, 6vw, 5.5rem);
+  padding: clamp(4.5rem, 8vw, 6.5rem) 0 clamp(3.5rem, 6vw, 5rem);
+}
+
+/* Left column — heading + legend */
+.headingCol {
+  flex: 0 0 auto;
+}
+
+/* Section heading */
+.heading {
+  margin: 0 0 2rem;
+  color: var(--color-accent-gold);
+  font-size: clamp(2.4rem, 5vw, 3.2rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+/* Right column — contains the card grid */
+.gridCol {
+  flex: 1 1 auto;
+}
+
+/* ─── Card grid — 3-column ─── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* ─── Individual card ─── */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 12px;
+  background: #111f2c;
+  border: 1px solid #1e2c3a;
+  border-radius: 10px;
+  cursor: default;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+/* Uniform gold hover on every card */
+.card:hover {
+  border-color: #E8C547;
+  transform: translateY(-2px);
+}
+
+/* ─── Status dot — absolutely positioned inside the card, top-right ─── */
+.dot {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.dotGold {
+  background: #E8C547;
+}
+
+.dotBlue {
+  background: #4A7FE0;
+}
+
+/* ─── Icon wrapper ─── */
+.iconWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* ─── Tech label ─── */
+.label {
+  color: var(--color-text-primary);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.2;
+  text-align: center;
+  letter-spacing: 0.01em;
+}
+
+/* ─── Legend row ─── */
+.legend {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legendDotGold {
+  background: #E8C547;
+}
+
+.legendDotBlue {
+  background: #4A7FE0;
+}
+
+.legendText {
+  color: var(--color-text-secondary);
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+/* ─── Responsive — collapse to single column at 900px (matches Hero breakpoint) ─── */
+@media (max-width: 900px) {
+  .inner {
+    width: min(42rem, calc(100% - 2rem));
+    min-height: auto;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 2.5rem;
+    padding: 4.4rem 0 5rem;
+    text-align: center;
+  }
+
+  .headingCol {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .legend {
+    flex-direction: row;
+    gap: 1.5rem;
+    justify-content: center;
+  }
+
+  .gridCol {
+    width: 100%;
+  }
+}
+
+/* ─── Narrow: 2-column grid ─── */
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ─── Very narrow: 1-column grid ─── */
+@media (max-width: 400px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .inner {
+    width: calc(100% - 2rem);
+  }
+}
+
+
