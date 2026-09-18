@@ -1,0 +1,446 @@
+/* ─────────────────────────────────────────
+   Contact section
+   ───────────────────────────────────────── */
+
+/* ── Section shell — no background so CursorGlow can show through ── */
+.section {
+  padding: clamp(5rem, 9vw, 7.5rem) 0 clamp(5rem, 9vw, 8rem);
+  scroll-margin-top: 5.5rem;
+}
+
+/* ── Centered container — matches hero / techstack / projects 1136px max ── */
+/* z-index: 3 lifts content above the global CursorGlow (z-index: 2) */
+.inner {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  width: min(1136px, calc(100% - 4rem));
+  margin: 0 auto;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+  align-items: start;
+  gap: clamp(3rem, 6vw, 5.5rem);
+}
+
+.infoCol {
+  display: flex;
+  flex-direction: column;
+}
+
+.label {
+  margin: 0 0 1.2rem;
+  color: var(--color-accent-gold);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+/* Heading — bold sans-serif to match Hero / TechStack / Projects */
+.heading {
+  margin: 0 0 2.5rem;
+  color: var(--color-text-heading);
+  font-size: clamp(2rem, 4.5vw, 2.8rem);
+  font-weight: 700;
+  line-height: 1.18;
+  letter-spacing: -0.01em;
+}
+
+.contactRows {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.contactRow {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  width: fit-content;
+  border-radius: 999px;
+  color: inherit;
+  text-decoration: none;
+  transition: transform 180ms ease;
+}
+
+.contactRow:hover {
+  transform: translateX(5px);
+}
+
+.contactRow:focus-visible {
+  outline: 2px solid var(--color-accent-gold);
+  outline-offset: 5px;
+}
+
+.contactIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  border: 1px solid rgba(204, 201, 220, 0.15);
+  background: rgba(17, 31, 44, 0.6);
+  color: var(--color-text-heading);
+  transition: background 180ms ease, border-color 180ms ease, color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.contactRow:hover .contactIcon {
+  border-color: rgba(232, 197, 71, 0.7);
+  background: rgba(232, 197, 71, 0.12);
+  color: var(--color-accent-gold);
+  box-shadow: 0 0 0 5px rgba(232, 197, 71, 0.06);
+}
+
+.contactDetail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.contactLabel {
+  color: var(--color-text-secondary);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.contactValue {
+  color: var(--color-text-heading);
+  font-size: 0.92rem;
+  font-weight: 500;
+  line-height: 1.3;
+  transition: color 180ms ease;
+}
+
+.contactRow:hover .contactValue {
+  color: var(--color-accent-gold);
+}
+
+/* Availability pills — horizontal row, tight gap */
+.pillRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.95rem;
+  border: 1px solid rgba(232, 197, 71, 0.35);
+  border-radius: 999px;
+  background: rgba(232, 197, 71, 0.08);
+  color: var(--color-accent-gold);
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.pillDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #28C840;
+  flex-shrink: 0;
+  animation: availability-pulse 2s ease-in-out infinite;
+}
+
+@keyframes availability-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.7;
+    transform: scale(1.15);
+  }
+}
+
+/* ── Right column — form card ── */
+.formCol {
+  display: flex;
+}
+
+.card {
+  position: relative;
+  width: 100%;
+  border: 1px solid rgba(204, 201, 220, 0.13);
+  border-radius: 12px;
+  background: #111f2c;
+  overflow: hidden;
+  transition: border-color 220ms ease, box-shadow 220ms ease, transform 220ms ease;
+}
+
+.card::before {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(232, 197, 71, 0.1), transparent 38%);
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms ease;
+}
+
+.card:hover {
+  border-color: rgba(232, 197, 71, 0.45);
+  box-shadow: 0 1.25rem 3.5rem rgba(0, 0, 0, 0.26),
+    0 0 1.75rem rgba(232, 197, 71, 0.07);
+  transform: translateY(-5px);
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+.cardHeader {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.35rem;
+  border-bottom: 1px solid rgba(204, 201, 220, 0.1);
+}
+
+.cardTitle {
+  color: var(--color-text-heading);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.cardTitleIcon {
+  color: var(--color-text-heading);
+  opacity: 0.6;
+}
+
+.form {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.fieldRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.fieldRow > .field:first-child {
+  border-right: 1px solid rgba(204, 201, 220, 0.1);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.9rem 1.35rem;
+  border-bottom: 1px solid rgba(204, 201, 220, 0.1);
+  transition: border-color 250ms ease, box-shadow 250ms ease;
+}
+
+.field:focus-within {
+  border-color: #E8C547;
+  box-shadow: 0 0 0 3px rgba(232, 197, 71, 0.15);
+  position: relative;
+  z-index: 1;
+}
+
+.fieldLabel {
+  color: var(--color-text-secondary);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1;
+  transition: color 250ms ease;
+}
+
+.field:focus-within .fieldLabel {
+  color: #E8C547;
+}
+
+.fieldInput,
+.fieldTextarea {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-text-heading);
+  font-family: inherit;
+  font-size: 0.88rem;
+  font-weight: 400;
+  line-height: 1.5;
+  outline: none;
+  resize: none;
+}
+
+.fieldInput::placeholder,
+.fieldTextarea::placeholder {
+  color: var(--color-text-secondary);
+  opacity: 0.55;
+}
+
+.fieldTextarea {
+  min-height: 7rem;
+}
+
+/* WebKit autofill paints its own light background and text unless overridden. */
+.fieldInput:-webkit-autofill,
+.fieldInput:-webkit-autofill:hover,
+.fieldInput:-webkit-autofill:focus,
+.fieldInput:-webkit-autofill:active,
+.fieldTextarea:-webkit-autofill,
+.fieldTextarea:-webkit-autofill:hover,
+.fieldTextarea:-webkit-autofill:focus,
+.fieldTextarea:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px var(--color-card-bg) inset !important;
+  -webkit-text-fill-color: var(--color-text-heading) !important;
+  caret-color: var(--color-text-heading) !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.formFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 1.35rem;
+}
+
+.footerNote {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 0.78rem;
+  line-height: 1.4;
+  opacity: 0.7;
+}
+
+.sendBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.6rem;
+  border: none;
+  border-radius: 8px;
+  background: var(--color-accent-gold);
+  color: #0C1821;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 180ms ease, transform 180ms ease;
+}
+
+.sendBtn:hover {
+  background: #f0d060;
+  transform: translateY(-1px);
+}
+
+.sendBtn:active {
+  transform: translateY(0);
+}
+
+.sendBtn:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+
+/* ─────────────────────────────────────────
+   Responsive — collapse to single column at 900px
+   ───────────────────────────────────────── */
+@media (max-width: 900px) {
+  .inner {
+    width: min(42rem, calc(100% - 2rem));
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+  }
+
+  .infoCol {
+    text-align: center;
+    align-items: center;
+  }
+
+  .contactRow {
+    justify-content: center;
+  }
+
+  .contactRow:hover {
+    transform: translateY(-2px);
+  }
+
+  .pillRow {
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contactRow,
+  .contactIcon,
+  .contactValue,
+  .card,
+  .card::before {
+    transition: none;
+  }
+
+  .pillDot {
+    animation: none;
+  }
+
+  .contactRow:hover,
+  .card:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .fieldRow {
+    grid-template-columns: 1fr;
+  }
+
+  .fieldRow > .field:first-child {
+    border-right: none;
+  }
+
+  .inner {
+    width: calc(100% - 2rem);
+  }
+
+  .heading {
+    font-size: clamp(1.6rem, 7vw, 2.2rem);
+  }
+
+  .formFooter {
+    flex-direction: column;
+    gap: 0.8rem;
+    align-items: stretch;
+  }
+
+  .footerNote {
+    text-align: center;
+  }
+
+  .sendBtn {
+    justify-content: center;
+  }
+
+  .pillRow {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+

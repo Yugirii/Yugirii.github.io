@@ -5,46 +5,18 @@
 /* Section wrapper — full-height, vertically centered, mirrors .hero */
 .section {
   position: relative;
-  overflow: hidden;          /* clips the glow blob at section edges */
-  background: var(--color-bg);
+  overflow: hidden;
   min-height: 100vh;
   display: flex;
   align-items: center;
-}
-
-/* ─── Cursor-following spotlight glow ───────────────────────────────────────
-   Rendered as the first child of <section>, behind .inner (z-index 0 vs 1).
-   Position is driven by JS via transform — GPU-composited, no layout thrash.
-   Starts hidden (opacity 0); fades in on mouseenter, out on mouseleave.
-─────────────────────────────────────────────────────────────────────────── */
-.spotlight {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 600px;
-  height: 600px;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    rgba(232, 197, 71, 0.18) 0%,
-    rgba(232, 197, 71, 0.08) 40%,
-    transparent 70%
-  );
-  filter: blur(48px);
-  pointer-events: none;
-  /* JS will override this transform on every rAF tick */
-  transform: translate(-50%, -50%);
-  z-index: 0;
-  will-change: transform;
-  opacity: 0;
-  transition: opacity 0.4s ease;
+  scroll-margin-top: 5.5rem;
 }
 
 /* Inner container — two-column grid, mirrors .heroInner */
-/* z-index: 1 lifts the entire content layer above the spotlight (z-index 0) */
+/* z-index: 3 lifts the entire content layer above the global CursorGlow (z-index: 2) */
 .inner {
   position: relative;
-  z-index: 1;
+  z-index: 3;
   display: grid;
   width: min(1136px, calc(100% - 4rem));
   min-height: 100vh;
@@ -177,7 +149,7 @@
   font-weight: 500;
 }
 
-/* ─── Responsive — collapse to single column at 900px (matches Hero breakpoint) ─── */
+/* ─── Responsive — collapse to single column at 900px ─── */
 @media (max-width: 900px) {
   .inner {
     width: min(42rem, calc(100% - 2rem));
@@ -223,5 +195,3 @@
     width: calc(100% - 2rem);
   }
 }
-
-

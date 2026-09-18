@@ -1,0 +1,48 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   CursorGlow — page-level spotlight blob
+   Mounted once at root; never destroyed between section changes.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.glow {
+  /* Fixed so scroll doesn't move it; sits over everything */
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  /* Size of the blob */
+  width: 640px;
+  height: 640px;
+  border-radius: 50%;
+
+  /*
+    The radial-gradient uses CSS custom properties for R/G/B so the JS lerp
+    can update the color every rAF tick without rebuilding the whole property.
+    --glow-r/g/b are initialised to gold (232, 197, 71) by the JS on mount.
+  */
+  --glow-r: 232;
+  --glow-g: 197;
+  --glow-b: 71;
+
+  background: radial-gradient(
+    circle,
+    rgba(var(--glow-r), var(--glow-g), var(--glow-b), 0.16) 0%,
+    rgba(var(--glow-r), var(--glow-g), var(--glow-b), 0.07) 40%,
+    transparent 70%
+  );
+
+  filter: blur(52px);
+
+  /* Events & stacking — above section backgrounds, below section content */
+  pointer-events: none;
+  z-index: 2;
+
+  /* GPU composite — only transform and opacity change */
+  will-change: transform;
+
+  /* Starts hidden; JS fades it in on first mousemove */
+  opacity: 0;
+  transition: opacity 0.45s ease;
+
+  /* Initial placement (overridden by JS immediately) */
+  transform: translate(-50%, -50%);
+}

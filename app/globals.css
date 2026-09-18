@@ -14,6 +14,9 @@
   --color-text-primary: #CCC9DC;
   --color-text-secondary: #9294A4;
 
+  /* Projects section */
+  --color-navy: #1B2A41;           /* browser-chrome bar + screenshot bg */
+
   /* System fallbacks & typography */
   --background: var(--color-bg);
   --foreground: var(--color-text-heading);

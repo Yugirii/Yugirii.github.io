@@ -1,18 +1,24 @@
 .pageShell {
   min-height: 100vh;
-  overflow-x: hidden;
+  /* `hidden` creates a scroll container and breaks the sticky navbar. */
+  overflow-x: clip;
   background: var(--color-bg);
   color: var(--color-text-body);
   font-family: "MS Reference Sans Serif", "Segoe UI", Arial, sans-serif;
 }
 
 .navbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   display: flex;
   min-height: 72px;
   align-items: center;
   justify-content: center;
   border-bottom: 1px solid rgba(204, 201, 220, 0.12);
-  background: var(--color-bg);
+  background: rgba(12, 24, 33, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
 .navLinks {
@@ -51,6 +57,7 @@
 
 .hero {
   position: relative;
+  z-index: 3;
   isolation: isolate;
   min-height: calc(100vh - 73px);
   overflow: hidden;

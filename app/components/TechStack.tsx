@@ -1,6 +1,7 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { motion, type Variants } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import { DiJava } from "react-icons/di";
 import {
   SiJavascript,
@@ -27,6 +28,13 @@ interface Tech {
 
 const ICON_SIZE = 26;
 const ICON_COLOR = "#CCC9DC";
+
+type StackOffset = {
+  x: number;
+  y: number;
+  rotate: number;
+  scale: number;
+};
 
 const techs: Tech[] = [
   {
@@ -92,100 +100,94 @@ const techs: Tech[] = [
   },
 ];
 
+const cardVariants: Variants = {
+  stacked: (offset: StackOffset & { index: number }) => ({
+    x: offset.x,
+    y: offset.y,
+    rotate: offset.rotate,
+    scale: offset.scale,
+    zIndex: techs.length - offset.index,
+  }),
+  visible: (offset: StackOffset & { index: number }) => ({
+    x: 0,
+    y: 0,
+    rotate: 0,
+    scale: 1,
+    zIndex: 1,
+    transition: {
+      delay: offset.index * 0.06,
+      duration: 0.5,
+      ease: "easeOut",
+    },
+  }),
+};
+
+// ── Spotlight removed — now handled by the global <CursorGlow /> in page.tsx ──
+
 export default function TechStack() {
-  // ── Refs ────────────────────────────────────────────────────────────────────
-  const sectionRef = useRef<HTMLElement>(null);
-  const glowRef    = useRef<HTMLDivElement>(null);
-  // Stores the pending rAF id so we can cancel it on cleanup / when motion stops
-  const rafRef     = useRef<number | null>(null);
+  const gridRef = useRef<HTMLUListElement>(null);
+  const cardRefs = useRef<Array<HTMLLIElement | null>>([]);
+  const [offsets, setOffsets] = useState<StackOffset[]>([]);
+  const [isMeasured, setIsMeasured] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
 
-  // ── Spotlight effect ────────────────────────────────────────────────────────
   useEffect(() => {
-    const section = sectionRef.current;
-    const glow    = glowRef.current;
-    if (!section || !glow) return;
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updateMotionPreference = () => setReducedMotion(mediaQuery.matches);
 
-    // 1. Skip entirely for users who prefer reduced motion
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    updateMotionPreference();
+    mediaQuery.addEventListener("change", updateMotionPreference);
 
-    // 2. Skip on touch / coarse-pointer devices (no cursor to follow)
-    if (!window.matchMedia("(pointer: fine)").matches) return;
+    return () => mediaQuery.removeEventListener("change", updateMotionPreference);
+  }, []);
 
-    // Lerp state — kept outside listeners so updateGlow closes over them
-    let targetX  = 0;
-    let targetY  = 0;
-    let currentX = 0;
-    let currentY = 0;
+  useEffect(() => {
+    let resizeTimer: number | undefined;
 
-    // rAF loop — lerps current position toward target, then reschedules itself
-    // until the delta falls below 0.5 px (effectively at rest)
-    function updateGlow() {
-      currentX += (targetX - currentX) * 0.15;
-      currentY += (targetY - currentY) * 0.15;
-
-      glow!.style.transform =
-        `translate(${currentX}px, ${currentY}px) translate(-50%, -50%)`;
-
-      if (
-        Math.abs(targetX - currentX) > 0.5 ||
-        Math.abs(targetY - currentY) > 0.5
-      ) {
-        rafRef.current = requestAnimationFrame(updateGlow);
-      } else {
-        // Snap to final position and stop the loop
-        glow!.style.transform =
-          `translate(${targetX}px, ${targetY}px) translate(-50%, -50%)`;
-        rafRef.current = null;
+    const measureStack = () => {
+      const grid = gridRef.current;
+      const cards = cardRefs.current;
+      if (!grid || cards.length !== techs.length || cards.some((card) => !card)) {
+        return;
       }
-    }
 
-    // Mouse tracking — only starts a new rAF frame if one isn't already queued
-    function onMouseMove(e: MouseEvent) {
-      const rect = section!.getBoundingClientRect();
-      targetX = e.clientX - rect.left;
-      targetY = e.clientY - rect.top;
+      const gridRect = grid.getBoundingClientRect();
+      const anchorX = gridRect.left + gridRect.width / 2;
+      const anchorY = gridRect.top + gridRect.height / 2;
 
-      if (rafRef.current === null) {
-        rafRef.current = requestAnimationFrame(updateGlow);
-      }
-    }
+      setOffsets(
+        cards.map((card, index) => {
+          const rect = card!.getBoundingClientRect();
+          const deckOffsetX = ((index * 17) % 5 - 2) * 3;
+          const deckOffsetY = (index - (techs.length - 1) / 2) * 1.5;
 
-    // Fade the glow out when the cursor leaves the section
-    function onMouseLeave() {
-      glow!.style.opacity = "0";
-    }
-
-    // Fade the glow in when the cursor enters the section
-    function onMouseEnter() {
-      glow!.style.opacity = "1";
-    }
-
-    section.addEventListener("mousemove",  onMouseMove);
-    section.addEventListener("mouseleave", onMouseLeave);
-    section.addEventListener("mouseenter", onMouseEnter);
-
-    // ── Cleanup ──────────────────────────────────────────────────────────────
-    // Runs when the component unmounts OR before the effect re-runs.
-    // Removes all three listeners and cancels any in-flight rAF to prevent
-    // the updateGlow closure from touching a detached DOM node.
-    return () => {
-      section.removeEventListener("mousemove",  onMouseMove);
-      section.removeEventListener("mouseleave", onMouseLeave);
-      section.removeEventListener("mouseenter", onMouseEnter);
-
-      if (rafRef.current !== null) {
-        cancelAnimationFrame(rafRef.current);
-        rafRef.current = null;
-      }
+          return {
+            x: anchorX - (rect.left + rect.width / 2) + deckOffsetX,
+            y: anchorY - (rect.top + rect.height / 2) + deckOffsetY,
+            rotate: (index % 5 - 2) * 2.2,
+            scale: 1 - index * 0.012,
+          };
+        }),
+      );
+      setIsMeasured(true);
     };
-  }, []); // empty deps — runs once on mount, cleans up on unmount
 
-  // ── Render ──────────────────────────────────────────────────────────────────
+    measureStack();
+
+    const onResize = () => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(measureStack, 150);
+    };
+
+    window.addEventListener("resize", onResize);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      window.clearTimeout(resizeTimer);
+    };
+  }, []);
+
   return (
-    <section ref={sectionRef} className={styles.section} id="tech-stack">
-      {/* Spotlight glow — sits at z-index 0, behind .inner (z-index 1) */}
-      <div ref={glowRef} className={styles.spotlight} aria-hidden="true" />
-
+    <section className={styles.section} id="tech-stack">
       <div className={styles.inner}>
         {/* Left column — heading + legend */}
         <div className={styles.headingCol}>
@@ -204,9 +206,36 @@ export default function TechStack() {
 
         {/* Right column — card grid */}
         <div className={styles.gridCol}>
-          <ul className={styles.grid} aria-label="Technologies">
-            {techs.map((tech) => (
-              <li key={tech.name} className={styles.card}>
+          <ul
+            ref={gridRef}
+            className={styles.grid}
+            aria-label="Technologies"
+            style={{ visibility: isMeasured ? "visible" : "hidden" }}
+          >
+            {techs.map((tech, index) => (
+              <motion.li
+                key={`${tech.name}-${isMeasured ? "measured" : "measuring"}`}
+                ref={(element) => {
+                  cardRefs.current[index] = element;
+                }}
+                className={styles.card}
+                custom={{
+                  ...(offsets[index] ?? {
+                    x: 0,
+                    y: 0,
+                    rotate: 0,
+                    scale: 1,
+                  }),
+                  index,
+                }}
+                variants={cardVariants}
+                initial={reducedMotion || !isMeasured ? false : "stacked"}
+                whileInView={
+                  reducedMotion || !isMeasured ? undefined : "visible"
+                }
+                whileHover={reducedMotion ? undefined : { y: -2 }}
+                viewport={{ once: true, amount: 0.3 }}
+              >
                 <span
                   className={`${styles.dot} ${
                     tech.category === "core" ? styles.dotGold : styles.dotBlue
@@ -219,7 +248,7 @@ export default function TechStack() {
                   {tech.icon}
                 </span>
                 <span className={styles.label}>{tech.name}</span>
-              </li>
+              </motion.li>
             ))}
           </ul>
         </div>
