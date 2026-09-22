@@ -1,9 +1,16 @@
-name: Deploy portfolio to GitHub Pages
+# DISABLED — this workflow was for GitHub Pages (static export).
+# The site is now deployed on Vercel, which runs Next.js natively
+# with full serverless support (API routes, image optimisation, etc.).
+# Re-enable and restore next.config.ts `output: "export"` only if
+# switching back to GitHub Pages hosting.
+#
+# name: Deploy portfolio to GitHub Pages
+#
+# on:
+#   push:
+#     branches: ["main"]
+#   workflow_dispatch:
 
-on:
-  push:
-    branches: ["main"]
-  workflow_dispatch:
 
 permissions:
   contents: read

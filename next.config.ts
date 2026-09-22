@@ -1,22 +1,19 @@
 import type { NextConfig } from "next";
 
-const repositoryName = process.env.GITHUB_REPOSITORY?.split("/")[1] ?? "";
-const isGitHubPages = process.env.GITHUB_ACTIONS === "true";
-const isUserSite = repositoryName.toLowerCase().endsWith(".github.io");
-const basePath = isGitHubPages && repositoryName && !isUserSite
-  ? `/${repositoryName}`
-  : "";
-
 const nextConfig: NextConfig = {
-  output: "export",
-  basePath,
-  trailingSlash: true,
+  // No `output: "export"` — Vercel runs Next.js natively with full
+  // serverless support. Static export mode strips API routes entirely,
+  // which is why /api/contact was returning 404 on Vercel.
   images: {
-    unoptimized: true,
+    // Let Vercel's built-in image optimisation run (remove unoptimized: true).
+    // If you ever re-enable GitHub Pages, add this back.
   },
   env: {
-    NEXT_PUBLIC_BASE_PATH: basePath,
+    // basePath is empty on Vercel (deployed at root).
+    // Keep the var in place so image src references still compile.
+    NEXT_PUBLIC_BASE_PATH: "",
   },
 };
 
 export default nextConfig;
+
