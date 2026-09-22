@@ -1,38 +1,20 @@
-import Image from "next/image";
+﻿import Image from "next/image";
 import styles from "./page.module.css";
 import TechStack from "./components/TechStack";
 import Projects from "./components/Projects";
 import About from "./components/About";
 import CursorGlow from "./components/CursorGlow";
+import NavBar from "./components/NavBar";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
 
-const navItems = [
-  { label: "Home", href: "#home" },
-  { label: "Stack", href: "#tech-stack" },
-  { label: "Projects", href: "#work" },
-  { label: "Contact", href: "#contact" },
-];
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 export default function Home() {
   return (
     <main className={styles.pageShell}>
-      {/* Global cursor-following spotlight — mounted once, never torn down */}
       <CursorGlow />
-      <header className={styles.navbar}>
-        <nav className={styles.navLinks} aria-label="Main navigation">
-          {navItems.map((item, index) => (
-            <a
-              key={item.label}
-              href={item.href}
-              className={index === 0 ? styles.navActive : styles.navLink}
-            >
-              {item.label}
-            </a>
-          ))}
-        </nav>
-      </header>
+      <NavBar />
 
       <section className={styles.hero} id="home">
         <div className={styles.heroInner}>

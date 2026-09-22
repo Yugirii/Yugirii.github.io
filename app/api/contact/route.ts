@@ -1,60 +1,76 @@
-import { Resend } from "resend";
+﻿import { Resend } from "resend";
 import { NextResponse } from "next/server";
 
-const recipient = process.env.CONTACT_RECIPIENT_EMAIL;
-const from = process.env.RESEND_FROM_EMAIL;
-const resendApiKey = process.env.RESEND_API_KEY;
+// Only RESEND_API_KEY is required from env.
+// to/from are hardcoded so the route works on Vercel even if optional
+// env vars are missing. Resend free tier requires sending to the
+// account owner email when no custom domain is verified.
+const RECIPIENT = "almendares.johnmarcus@gmail.com";
+const FROM      = "Portfolio Contact <onboarding@resend.dev>";
 
 export async function POST(request: Request) {
-  if (!resendApiKey || !recipient || !from) {
+  const apiKey = process.env.RESEND_API_KEY;
+
+  if (!apiKey) {
     return NextResponse.json(
-      { error: "Email delivery is not configured." },
+      { error: "Mail service is not configured." },
       { status: 500 },
     );
   }
 
+  let body: Record<string, unknown>;
   try {
-    const body = await request.json();
-    const email = typeof body.email === "string" ? body.email.trim() : "";
-    const phone = typeof body.phone === "string" ? body.phone.trim() : "";
-    const message = typeof body.message === "string" ? body.message.trim() : "";
+    body = await request.json();
+  } catch {
+    return NextResponse.json(
+      { error: "Invalid request body." },
+      { status: 400 },
+    );
+  }
 
-    if (!email || !message) {
-      return NextResponse.json(
-        { error: "Please provide your email and a message." },
-        { status: 400 },
-      );
-    }
+  const email   = typeof body.email   === "string" ? body.email.trim()   : "";
+  const phone   = typeof body.phone   === "string" ? body.phone.trim()   : "";
+  const message = typeof body.message === "string" ? body.message.trim() : "";
 
-    if (email.length > 320 || phone.length > 50 || message.length > 5000) {
-      return NextResponse.json(
-        { error: "One or more fields are too long." },
-        { status: 400 },
-      );
-    }
+  if (!email || !message) {
+    return NextResponse.json(
+      { error: "Please provide your email and a message." },
+      { status: 400 },
+    );
+  }
 
-    const resend = new Resend(resendApiKey);
+  if (email.length > 320 || phone.length > 50 || message.length > 5000) {
+    return NextResponse.json(
+      { error: "One or more fields are too long." },
+      { status: 400 },
+    );
+  }
+
+  try {
+    const resend = new Resend(apiKey);
     const { error } = await resend.emails.send({
-      from,
-      to: [recipient],
+      from:    FROM,
+      to:      [RECIPIENT],
       replyTo: email,
       subject: `Portfolio inquiry from ${email}`,
-      text: `From: ${email}\nPhone: ${phone || "Not provided"}\n\nMessage:\n${message}`,
+      text:    `From:    ${email}\nPhone:   ${phone || "Not provided"}\n\nMessage:\n${message}`,
     });
 
     if (error) {
-      console.error("Resend contact form error:", error);
+      console.error("Resend error:", error);
       return NextResponse.json(
-        { error: "Unable to send your message right now." },
+        { error: `Mail delivery failed: ${error.message}` },
         { status: 502 },
       );
     }
 
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "Unknown error";
+    console.error("Contact route exception:", msg);
     return NextResponse.json(
-      { error: "Please check your message and try again." },
-      { status: 400 },
+      { error: `Server error: ${msg}` },
+      { status: 500 },
     );
   }
 }

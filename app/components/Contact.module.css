@@ -325,6 +325,19 @@
   font-size: 0.78rem;
   line-height: 1.4;
   opacity: 0.7;
+  transition: color 200ms ease, opacity 200ms ease;
+}
+
+/* Success state — green tint */
+.footerSuccess {
+  color: #4ade80;
+  opacity: 1;
+}
+
+/* Error state — red tint */
+.footerError {
+  color: #f87171;
+  opacity: 1;
 }
 
 .sendBtn {

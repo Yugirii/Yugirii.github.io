@@ -194,7 +194,16 @@ export default function Contact() {
 
               {/* Footer row */}
               <div className={styles.formFooter}>
-                <p className={styles.footerNote} aria-live="polite">
+                <p
+                  className={`${styles.footerNote} ${
+                    formStatus === "success"
+                      ? styles.footerSuccess
+                      : formStatus === "error"
+                      ? styles.footerError
+                      : ""
+                  }`}
+                  aria-live="polite"
+                >
                   {formMessage || "I'll get back as soon as possible."}
                 </p>
                 <button type="submit" className={styles.sendBtn} disabled={formStatus === "sending"}>

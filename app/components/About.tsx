@@ -104,8 +104,8 @@ export default function About() {
           </div>
         </div>
 
-        <a className={styles.cta} href="#work">
-          View My Work
+        <a className={styles.cta} href="#contact">
+          Let&apos;s Connect
           <FiArrowRight size={16} aria-hidden="true" />
         </a>
       </div>

@@ -1,52 +1,38 @@
-"use client";
-
-/**
- * CursorGlow — singleton page-level spotlight that follows the mouse.
- *
- * Key decisions:
- * • Mounted ONCE at root — never destroyed between sections, so the glow
- *   is always alive. No disappear/reappear when crossing section boundaries.
- * • Global `window` mousemove keeps the lerp loop running everywhere.
- * • Color zone detection keeps the glow within the Tech Stack and Contact sections.
- * • `prefers-reduced-motion` and coarse-pointer guards remain.
- */
+﻿"use client";
 
 import { useEffect, useRef } from "react";
 import styles from "./CursorGlow.module.css";
 
-// ── Palette ───────────────────────────────────────────────────────────────────
-const GOLD = { r: 232, g: 197, b:  71 }; // #E8C547 — TechStack / default
+// Palette
+const GOLD = { r: 232, g: 197, b: 71  }; // #E8C547 — Tech Stack (gold)
+const BLUE = { r: 49,  g: 117, b: 250 }; // #3175FA — Projects + Contact (blue)
 
-// ── Lerp speeds ───────────────────────────────────────────────────────────────
+// Lerp speeds
 const LERP_POS   = 0.12; // position smoothing
-const LERP_COLOR = 0.06; // color crossfade (slower = smoother transition)
+const LERP_COLOR = 0.06; // color crossfade — slower = dreamier
 
 export default function CursorGlow() {
   const glowRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Abort early — these guards ensure glow is non-null for every closure
     const el = glowRef.current;
     if (!el) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     if (!window.matchMedia("(pointer: fine)").matches) return;
 
-    // Cast once — el is confirmed non-null above; closures below can use it safely
     const glow = el as HTMLDivElement;
 
-    // ── State ─────────────────────────────────────────────────────────────────
     let targetX  = window.innerWidth  / 2;
     let targetY  = window.innerHeight / 2;
     let currentX = targetX;
     let currentY = targetY;
 
-    let curR = GOLD.r, curG = GOLD.g, curB = GOLD.b; // lerped color
-    let tgtR = GOLD.r, tgtG = GOLD.g, tgtB = GOLD.b; // target color
+    let curR = GOLD.r, curG = GOLD.g, curB = GOLD.b;
+    let tgtR = GOLD.r, tgtG = GOLD.g, tgtB = GOLD.b;
 
     let isVisible = false;
     let rafId: number | null = null;
 
-    // ── rAF loop ──────────────────────────────────────────────────────────────
     function tick() {
       currentX += (targetX - currentX) * LERP_POS;
       currentY += (targetY - currentY) * LERP_POS;
@@ -69,32 +55,30 @@ export default function CursorGlow() {
       }
     }
 
-    // ── Mouse tracking — global ───────────────────────────────────────────────
+    function inRect(elem: HTMLElement, x: number, y: number): boolean {
+      const r = elem.getBoundingClientRect();
+      return y >= r.top && y <= r.bottom && x >= r.left && x <= r.right;
+    }
+
     function onMouseMove(e: MouseEvent) {
       targetX = e.clientX;
       targetY = e.clientY;
 
-      // Determine which zone the cursor is in
-      const techEl = document.getElementById("tech-stack");
+      const techEl     = document.getElementById("tech-stack");
+      const projectsEl = document.getElementById("work");
+      const contactEl  = document.getElementById("contact");
 
-      let inTechStack = false;
+      const inTechStack = techEl     ? inRect(techEl,     e.clientX, e.clientY) : false;
+      const inProjects  = projectsEl ? inRect(projectsEl, e.clientX, e.clientY) : false;
+      const inContact   = contactEl  ? inRect(contactEl,  e.clientX, e.clientY) : false;
 
-      if (techEl) {
-        const r = techEl.getBoundingClientRect();
-        inTechStack =
-          e.clientY >= r.top  && e.clientY <= r.bottom &&
-          e.clientX >= r.left && e.clientX <= r.right;
-      }
-
-      const inActiveZone = inTechStack;
+      const inActiveZone = inTechStack || inProjects || inContact;
 
       if (inActiveZone && !isVisible) {
-        // Entering an active zone — show glow and start loop
         isVisible = true;
         glow.style.opacity = "1";
         ensureLoop();
       } else if (!inActiveZone && isVisible) {
-        // Leaving active zones (e.g. entering Hero) — hide glow
         isVisible = false;
         glow.style.opacity = "0";
       }
@@ -103,9 +87,13 @@ export default function CursorGlow() {
         ensureLoop();
       }
 
-      tgtR = GOLD.r;
-      tgtG = GOLD.g;
-      tgtB = GOLD.b;
+      // Set color target — color lerp in tick() creates smooth crossfade
+      if (inTechStack) {
+        tgtR = GOLD.r; tgtG = GOLD.g; tgtB = GOLD.b;
+      } else if (inProjects || inContact) {
+        tgtR = BLUE.r; tgtG = BLUE.g; tgtB = BLUE.b;
+      }
+      // Outside active zones: keep last target so fade-out does not snap color
     }
 
     function onMouseLeave() {
@@ -114,20 +102,14 @@ export default function CursorGlow() {
       rafId = null;
     }
 
-    // onMouseEnter intentionally does NOT restore visibility here.
-    // The next mousemove will fire immediately after re-entry and the
-    // zone check in onMouseMove will decide whether to show the glow.
-    function onMouseEnter() {
-      // no-op — let onMouseMove handle zone-based visibility
-    }
+    function onMouseEnter() { /* no-op — next mousemove handles zone detection */ }
 
-    window.addEventListener("mousemove",   onMouseMove,  { passive: true });
+    window.addEventListener("mousemove",    onMouseMove,  { passive: true });
     document.addEventListener("mouseleave", onMouseLeave);
     document.addEventListener("mouseenter", onMouseEnter);
 
-    // ── Cleanup ───────────────────────────────────────────────────────────────
     return () => {
-      window.removeEventListener("mousemove",   onMouseMove);
+      window.removeEventListener("mousemove",    onMouseMove);
       document.removeEventListener("mouseleave", onMouseLeave);
       document.removeEventListener("mouseenter", onMouseEnter);
       if (rafId !== null) cancelAnimationFrame(rafId);

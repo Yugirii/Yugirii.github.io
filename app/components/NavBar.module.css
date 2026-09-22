@@ -1,0 +1,112 @@
+/* ─────────────────────────────────────────
+   NavBar — sticky navigation bar
+   ───────────────────────────────────────── */
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  min-height: 72px;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid rgba(204, 201, 220, 0.12);
+  background: rgba(12, 24, 33, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.navLinks {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1.75rem, 5vw, 4.5rem);
+  padding: 0 1.5rem;
+}
+
+/* ── Shared base for both states ── */
+.navLink,
+.navActive {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.78rem;
+  line-height: 1;
+  text-decoration: none;
+  transition: color 200ms ease, transform 200ms ease;
+  padding-bottom: 3px; /* room for the underline */
+}
+
+/* ── Default (inactive) state ── */
+.navLink {
+  color: var(--color-text-body);
+  font-weight: 400;
+}
+
+/* ── Active state ── */
+.navActive {
+  color: var(--color-accent-gold);
+  font-weight: 700;
+}
+
+/* ── Hover: inactive links shift to blue and lift slightly ── */
+.navLink:hover {
+  color: var(--color-accent-blue-light);
+  transform: translateY(-1px);
+}
+
+/* ── Hover: active link just lifts (keeps gold) ── */
+.navActive:hover {
+  transform: translateY(-1px);
+}
+
+/* ── Sliding underline accent ── */
+.underline {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--color-accent-gold);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 200ms ease;
+}
+
+/* Show underline when active */
+.navActive .underline {
+  transform: scaleX(1);
+}
+
+/* Show underline on hover for both states */
+.navLink:hover .underline,
+.navActive:hover .underline {
+  transform: scaleX(1);
+}
+
+/* Focus styles */
+.navLink:focus-visible,
+.navActive:focus-visible {
+  outline: 2px solid var(--color-accent-gold);
+  outline-offset: 5px;
+  border-radius: 2px;
+}
+
+/* ── Responsive — tighter gap at small viewports ── */
+@media (max-width: 560px) {
+  .navbar {
+    min-height: 68px;
+  }
+
+  .navLinks {
+    width: 100%;
+    gap: clamp(1rem, 6vw, 1.8rem);
+  }
+
+  .navLink,
+  .navActive {
+    font-size: 0.72rem;
+  }
+}
